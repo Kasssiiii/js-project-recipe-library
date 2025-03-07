@@ -18,6 +18,10 @@
     font-weight: 700;
   }
 
+  .random-button {
+    margin: 0 0 20px 50px;
+  }
+
   h2 {
     color: #000;
     font-size: 22px;
