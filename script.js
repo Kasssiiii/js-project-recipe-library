@@ -1,3 +1,4 @@
+/* WEEK 1 JS 
 const allFilter = document.getElementById("all-filter");
 allFilter.onclick = () => {
   clickButton(allFilter)
@@ -27,3 +28,5 @@ const clickButton = (button) => {
         alert("You have chosen recipies from all cuisines");
     }
 };
+*/
+
