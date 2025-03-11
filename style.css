@@ -87,6 +87,16 @@
     color: white;
   }
   
+  .errorMessage {
+    color: #ff6589;
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    padding: 0 20px 0 20px;
+    margin: 0 20px 0 20px;
+  }
+
   .recipeSection {
     /*display: flex;*/
     display: grid;

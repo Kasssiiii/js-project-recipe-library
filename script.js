@@ -31,172 +31,164 @@ const clickButton = (button) => {
 */
 
 
-const recipesSection = document.getElementById("recipeSection")
+const recipesSection = document.getElementById("recipeSection");
+const errorSection = document.getElementById("errorMessage");
   
 //Array with recipes
 const recipes = [
-    {
-      id: 1,
-      title: "Vegan Lentil Soup",
-      image: "images/carbonara.jpg",
-      readyInMinutes: 30,
-      servings: 4,
-      diets: ["vegan"],
-      cuisine: "Italian",
-      ingredients: [
-        "red lentils",
-        "carrots",
-        "onion",
-        "garlic",
-        "tomato paste",
-        "cumin",
-        "paprika",
-        "vegetable broth",
-        "olive oil",
-        "salt"
-      ],
-      pricePerServing: 2.5,
-      popularity: 85
-    },
-    {
-      id: 2,
-      title: "Vegetarian Pesto Pasta",
-      image: "images/carbonara.jpg",
-      readyInMinutes: 25,
-      servings: 2,
-      diets: ["vegetarian"],
-      cuisine: "Italian",
-      ingredients: [
-        "pasta",
-        "basil",
-        "parmesan cheese",
-        "garlic",
-        "pine nuts",
-        "olive oil",
-        "salt",
-        "black pepper"
-      ],
-      pricePerServing: 3.0,
-      popularity: 92
-    },
-    {
-      id: 3,
-      title: "Gluten-Free Chicken Stir-Fry",
-      image: "images/carbonara.jpg",
-      readyInMinutes: 20,
-      servings: 3,
-      diets: ["gluten-free"],
-      cuisine: "Asian",
-      ingredients: [
-        "chicken breast",
-        "broccoli",
-        "bell pepper",
-        "carrot",
-        "soy sauce (gluten-free)",
-        "ginger",
-        "garlic",
-        "sesame oil",
-        "cornstarch",
-        "green onion",
-        "sesame seeds",
-        "rice"
-      ],
-      pricePerServing: 4.0,
-      popularity: 78
-    },
-    {
-      id: 4,
-      title: "Dairy-Free Tacos",
-      image: "images/carbonara.jpg",
-      readyInMinutes: 15,
-      servings: 2,
-      diets: ["dairy-free"],
-      cuisine: "American",
-      ingredients: [
-        "corn tortillas",
-        "ground beef",
-        "taco seasoning",
-        "lettuce",
-        "tomato",
-        "avocado"
-      ],
-      pricePerServing: 2.8,
-      popularity: 88
-    },
-    {
-      id: 5,
-      title: "Middle Eastern Hummus",
-      image: "images/carbonara.jpg",
-      readyInMinutes: 10,
-      servings: 4,
-      diets: ["vegan", "gluten-free"],
-      cuisine: "Middle Eastern",
-      ingredients: [
-        "chickpeas",
-        "tahini",
-        "garlic",
-        "lemon juice",
-        "olive oil"
-      ],
-      pricePerServing: 1.5,
-      popularity: 95
-    },
-    {
-      id: 6,
-      title: "Quick Avocado Toast",
-      image: "images/carbonara.jpg",
-      readyInMinutes: 5,
-      servings: 1,
-      diets: ["vegan"],
-      cuisine: "Italian",
-      ingredients: [
-        "bread",
-        "avocado",
-        "lemon juice",
-        "salt"
-      ],
-      pricePerServing: 2.0,
-      popularity: 90
-    },
-    {
-      id: 7,
-      title: "Beef Stew",
-      image: "images/carbonara.jpg",
-      readyInMinutes: 90,
-      servings: 5,
-      diets: [],
-      cuisine: "European",
-      ingredients: [
-        "beef chunks",
-        "potatoes",
-        "carrots",
-        "onion",
-        "garlic",
-        "tomato paste",
-        "beef broth",
-        "red wine",
-        "bay leaves",
-        "thyme",
-        "salt",
-        "black pepper",
-        "butter",
-        "flour",
-        "celery",
-        "mushrooms"
-      ],
-      pricePerServing: 5.5,
-      popularity: 80
-    }
-  ]
+  {
+    id: 1,
+    title: "Vegan Lentil Soup",
+    image: "images/carbonara.jpg",
+    readyInMinutes: 30,
+    servings: 4,
+    diets: ["vegan"],
+    cuisine: "Italian",
+    ingredients: [
+      "red lentils",
+      "carrots",
+      "onion",
+      "garlic",
+      "tomato paste",
+      "cumin",
+      "paprika",
+      "vegetable broth",
+      "olive oil",
+      "salt",
+    ],
+    pricePerServing: 2.5,
+    popularity: 85,
+  },
+  {
+    id: 2,
+    title: "Vegetarian Pesto Pasta",
+    image: "images/carbonara.jpg",
+    readyInMinutes: 25,
+    servings: 2,
+    diets: ["vegetarian"],
+    cuisine: "Italian",
+    ingredients: [
+      "pasta",
+      "basil",
+      "parmesan cheese",
+      "garlic",
+      "pine nuts",
+      "olive oil",
+      "salt",
+      "black pepper",
+    ],
+    pricePerServing: 3.0,
+    popularity: 92,
+  },
+  {
+    id: 3,
+    title: "Gluten-Free Chicken Stir-Fry",
+    image: "images/carbonara.jpg",
+    readyInMinutes: 20,
+    servings: 3,
+    diets: ["gluten-free"],
+    cuisine: "Asian",
+    ingredients: [
+      "chicken breast",
+      "broccoli",
+      "bell pepper",
+      "carrot",
+      "soy sauce (gluten-free)",
+      "ginger",
+      "garlic",
+      "sesame oil",
+      "cornstarch",
+      "green onion",
+      "sesame seeds",
+      "rice",
+    ],
+    pricePerServing: 4.0,
+    popularity: 78,
+  },
+  {
+    id: 4,
+    title: "Dairy-Free Tacos",
+    image: "images/carbonara.jpg",
+    readyInMinutes: 15,
+    servings: 2,
+    diets: ["dairy-free"],
+    cuisine: "American",
+    ingredients: [
+      "corn tortillas",
+      "ground beef",
+      "taco seasoning",
+      "lettuce",
+      "tomato",
+      "avocado",
+    ],
+    pricePerServing: 2.8,
+    popularity: 88,
+  },
+  {
+    id: 5,
+    title: "Middle Eastern Hummus",
+    image: "images/carbonara.jpg",
+    readyInMinutes: 10,
+    servings: 4,
+    diets: ["vegan", "gluten-free"],
+    cuisine: "Middle Eastern",
+    ingredients: ["chickpeas", "tahini", "garlic", "lemon juice", "olive oil"],
+    pricePerServing: 1.5,
+    popularity: 95,
+  },
+  {
+    id: 6,
+    title: "Quick Avocado Toast",
+    image: "images/carbonara.jpg",
+    readyInMinutes: 5,
+    servings: 1,
+    diets: ["vegan"],
+    cuisine: "Italian",
+    ingredients: ["bread", "avocado", "lemon juice", "salt"],
+    pricePerServing: 2.0,
+    popularity: 90,
+  },
+  {
+    id: 7,
+    title: "Beef Stew",
+    image: "images/carbonara.jpg",
+    readyInMinutes: 90,
+    servings: 5,
+    diets: [],
+    cuisine: "European",
+    ingredients: [
+      "beef chunks",
+      "potatoes",
+      "carrots",
+      "onion",
+      "garlic",
+      "tomato paste",
+      "beef broth",
+      "red wine",
+      "bay leaves",
+      "thyme",
+      "salt",
+      "black pepper",
+      "butter",
+      "flour",
+      "celery",
+      "mushrooms",
+    ],
+    pricePerServing: 5.5,
+    popularity: 80,
+  },
+];
 
   //Function to display recepies
   const displayRecipes = (recipes, button) => {
-    //clear recepie section
+    //clear recepie section as well as any previous error messages
     recipesSection.innerHTML = ""
+    errorSection.innerHTML = ""
 
     //if statement for no criterion
     if (recipes.length == 0 && button != null) {
-        alert("There is no recipes matching criterion "+button.textContent)
+      errorSection.innerHTML = "There is no recipes matching criterion for "+button.textContent;
+      return
     }
   
     recipes.forEach((recipe) => {
