@@ -19,13 +19,13 @@ chinaFilter.onclick = () => {
 const clickButton = (button) => {
     const text = button.textContent;
     if (text == "USA") {
-        alert("You have chosen american cuisine");
+        errorSection.innerHTML ="You have chosen american cuisine";
     } else if (text == "China") {
-        alert("You have chosen chineese cuisine");
+        errorSection.innerHTML ="You have chosen chineese cuisine";
     } else if (text == "Italy") {
-        alert("You have chosen italian cuisine");
+        errorSection.innerHTML ="You have chosen italian cuisine";
     } else {
-        alert("You have chosen recipies from all cuisines");
+        errorSection.innerHTML ="You have chosen recipies from all cuisines";
     }
 };
 */
@@ -33,6 +33,28 @@ const clickButton = (button) => {
 
 const recipesSection = document.getElementById("recipeSection");
 const errorSection = document.getElementById("errorMessage");
+
+
+const randomButton = document.getElementById("random")
+const allButton = document.getElementById("all")
+const italyButton = document.getElementById("italy")
+const usaButton = document.getElementById("usa")
+const chinaButton = document.getElementById("china")
+const swedenButton = document.getElementById("sweden")
+
+const allFilterButtons = [randomButton, allButton, italyButton, usaButton, chinaButton, swedenButton];
+
+//check if the button all is active
+//const allActive = allButton.classList.contains("active")
+// set the button all to inactive
+//allButton.classList.remove("active")
+// set the button all to active
+//allButton.classList.add("active")
+
+const sortByTimeAscButton = document.getElementById("highToLow")
+const sortByTimeDescButton = document.getElementById("lowToHigh")
+
+const allSortButtons = [sortByTimeAscButton, sortByTimeDescButton];
   
 //Array with recipes
 const recipes = [
@@ -179,28 +201,75 @@ const recipes = [
   },
 ];
 
-  //Function to display recepies
-  const displayRecipes = (recipes, button) => {
-    //clear recepie section as well as any previous error messages
-    recipesSection.innerHTML = ""
-    errorSection.innerHTML = ""
+  //Function to filter, sort and display recepies
+const displayRecipes = (button) => {
+  //clear recepie section as well as any previous error messages
+  recipesSection.innerHTML = "";
+  errorSection.innerHTML = "";
 
-    //if statement for no criterion
-    if (recipes.length == 0 && button != null) {
-      errorSection.innerHTML = "There is no recipes matching criterion for "+button.textContent;
-      return
-    }
-  
-    recipes.forEach((recipe) => {
-        //for each receipe , we are transporming elements from the list to LI HTML elements and joining them into single string
-      const ingredientsList = recipe.ingredients
-        .map((ingredient, index) => {
-          return `<li>${ingredient}</li>`
-        })
-        .join("")
-        
-      //replacing HTML recipe section with elements from an array
-      recipesSection.innerHTML += `
+  // find the group of buttons (either allkitchenButtons or allTimeButtons) that the clicked button belongs to
+  const buttonGroup = button.classList.contains("sort-button") ? allSortButtons : allFilterButtons;
+  // loop through all buttons in the group and remove the active class
+  buttonGroup.forEach((button) => button.classList.remove("active"));
+  // add the active class to the clicked button
+  button.classList.add("active");
+
+  // get the active filter option from the allFilterButtons array
+  const filterOptionButton = allFilterButtons.find((kitchenButton) => kitchenButton.classList.contains("active"));
+  // get id of the active filter option
+  const kitchenOptionId = filterOptionButton.id;
+
+  // get the active sort option from the allSortButtons array
+  const sortOptionButton = allSortButtons.find((timeButton) => timeButton.classList.contains("active"));
+  // get id of the active sort option 
+  const sortOptionId = sortOptionButton.id;
+
+  // filter the recipes based on the active filter option
+  let filteredRecipes;
+  if (kitchenOptionId === "all") {
+    filteredRecipes = [...recipes];
+  } else if (kitchenOptionId === "random") {
+    const random = Math.floor(Math.random() * recipes.length);
+    filteredRecipes = [recipes[random]];
+  } else if (kitchenOptionId === "italy") {
+    filteredRecipes = recipes.filter((recipe) => recipe.cuisine === "Italian");
+  } else if (kitchenOptionId === "usa") {
+    filteredRecipes = recipes.filter((recipe) => recipe.cuisine === "American");
+  } else if (kitchenOptionId === "china") {
+    filteredRecipes = recipes.filter((recipe) => recipe.cuisine === "Asian");
+  } else if (kitchenOptionId === "sweden") {
+    filteredRecipes = recipes.filter((recipe) => recipe.cuisine === "Sweden");
+  }
+
+  //if statement for no criterion
+  if (recipes.length == 0) {
+    errorSection.innerHTML =
+      "There is no recipes matching criterion for " + button.textContent;
+    return;
+  }
+
+  // sort the recipes based on the active sort option
+  let sortedRecipes;
+  if (sortOptionId === "highToLow") {
+    sortedRecipes = filteredRecipes.sort(
+      (a, b) => (b.readyInMinutes || Infinity) - (a.readyInMinutes || Infinity)
+    );
+  } else if (sortOptionId === "lowToHigh") {
+    sortedRecipes = filteredRecipes.sort(
+      (a, b) => (a.readyInMinutes || Infinity) - (b.readyInMinutes || Infinity)
+    );
+  }
+
+  sortedRecipes.forEach((recipe) => {
+    //for each sorted recipe, we are transporming elements from the list to LI HTML elements and joining them into single string
+    const ingredientsList = recipe.ingredients
+      .map((ingredient, index) => {
+        return `<li>${ingredient}</li>`;
+      })
+      .join("");
+
+    //replacing HTML recipe section with elements from an array
+    recipesSection.innerHTML += `
 
 
         <div class="recipe">
@@ -221,74 +290,22 @@ const recipes = [
         </ul>
         </div>
       </div>
-      `
-    })
-  }
+      `;
+  });
+};
 
-  //Delaring all the CONSTs for buttons
+// Adding event listeners to all buttons (filter and sort - displayed when clicked)
 
-const randomButton = document.getElementById("random")
-const allButton = document.getElementById("all")
-const italyButton = document.getElementById("italy")
-const usaButton = document.getElementById("usa")
-const chinaButton = document.getElementById("china")
-const swedenButton = document.getElementById("sweden")
+allFilterButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    displayRecipes(button);
+  });
+});
 
-
-const sortByTimeAscButton = document.getElementById("highToLow")
-const sortByTimeDescButton = document.getElementById("lowToHigh")
-
-//random button - math random - random element 
-randomButton.addEventListener("click", () => {
-    const random = Math.floor(Math.random() * recipes.length);
-    const randomRecipe = recipes[random];
-    displayRecipes([randomRecipe], randomButton)
-  })
-
-  allButton.addEventListener("click", () => {
-    displayRecipes(recipes, allButton)
-  })
+allSortButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    displayRecipes(button);
+  });
+});
   
-  italyButton.addEventListener("click", () => {
-    const italianRecipes = recipes.filter((recipe) =>
-      recipe.cuisine.includes("Italian")
-    )
-    displayRecipes(italianRecipes, italyButton)
-  })
-  
-  chinaButton.addEventListener("click", () => {
-    const asianRecipes = recipes.filter((recipe) =>
-      recipe.cuisine.includes("Asian")
-    )
-    displayRecipes(asianRecipes, chinaButton)
-  })
-  
-  usaButton.addEventListener("click", () => {
-    const AmericanRecipes = recipes.filter((recipe) =>
-      recipe.cuisine.includes("American")
-    )
-    displayRecipes(AmericanRecipes, usaButton)
-  })
-
-  swedenButton.addEventListener("click", () => {
-    const SwedenRecipes = recipes.filter((recipe) =>
-      recipe.cuisine.includes("Sweden")
-    )
-    displayRecipes(SwedenRecipes, swedenButton)
-  })
-  
-  //sorting by time
-  sortByTimeAscButton.addEventListener("click", () => {
-    const sortedRecipes = [...recipes].sort(
-      (a, b) => (a.readyInMinutes || Infinity) - (b.readyInMinutes || Infinity)
-    )
-    displayRecipes(sortedRecipes, sortByTimeAscButton)
-  })
-  sortByTimeDescButton.addEventListener("click", () => {
-    const sortedRecipes = [...recipes].sort(
-      (a, b) => (b.readyInMinutes || Infinity) - (a.readyInMinutes || Infinity)
-    );
-    displayRecipes(sortedRecipes, sortByTimeDescButton);
-  })
-  
-  displayRecipes(recipes, null)
+displayRecipes(allButton)
