@@ -1,4 +1,4 @@
-/* WEEK 1 JS 
+/* WEEK 1 JS - selection messages displayed in an Error Section
 const allFilter = document.getElementById("all-filter");
 allFilter.onclick = () => {
   clickButton(allFilter)
@@ -34,15 +34,21 @@ const clickButton = (button) => {
 const recipesSection = document.getElementById("recipeSection");
 const errorSection = document.getElementById("errorMessage");
 
-
+/**  W1&2 - defined buttons for selection from a given Array
 const randomButton = document.getElementById("random")
 const allButton = document.getElementById("all")
-const italyButton = document.getElementById("italy")
-const usaButton = document.getElementById("usa")
-const chinaButton = document.getElementById("china")
-const swedenButton = document.getElementById("sweden")
 
-const allFilterButtons = [randomButton, allButton, italyButton, usaButton, chinaButton, swedenButton];
+const italyButton = document.getElementById("lunch")
+const usaButton = document.getElementById("dinner")
+const chinaButton = document.getElementById("dessert")
+const swedenButton = document.getElementById("drink")
+const drinkButton = document.getElementById("snack")
+*/
+
+const allFilters = ["lunch", "soup", "dessert", "drink", "snack", "salad", "breakfast", "side dish"];
+const allFilterButtons = ["random", "all", ...allFilters]
+  .map((text) => { return document.getElementById(text)});
+
 
 //check if the button all is active
 //const allActive = allButton.classList.contains("active")
@@ -56,7 +62,48 @@ const sortByTimeDescButton = document.getElementById("lowToHigh")
 
 const allSortButtons = [sortByTimeAscButton, sortByTimeDescButton];
   
-//Array with recipes
+
+// fetch recipes from GET https://api.spoonacular.com/recipes/random
+const apiRecipes = async () => {
+  try {
+    const response = await fetch( "https://api.spoonacular.com/recipes/random?number=100&apiKey=aa5ed444617a4f9bbabeb0e831c3f0ca");
+    if (!response.ok) {
+      throw new Error();
+    }
+    const data = await response.json();
+    return data.recipes;
+  } catch (error) {
+    errorSection.innerHTML = "An error occured while fetching the recipes. Please try again later.";
+    return [];
+  }
+}
+
+let recipes = [];
+//fill in the recipes array with the data from the API (only picked fields needed for button selection)
+//all the "Filter on kitchen" butttons are contained within types (dish types)
+apiRecipes().then((data) => {
+  recipes = data.map((recipe) => {
+    return {
+      title: recipe.title,
+      types: recipe.dishTypes.filter( element => allFilters.includes(element)),
+      image: recipe.image,
+      readyInMinutes: recipe.readyInMinutes,
+      servings: recipe.servings,
+      diets: recipe.diets,
+      cuisine: recipe.cuisines,
+      ingredients: recipe.extendedIngredients.map((ingredient) => ingredient.original),
+      pricePerServing: recipe.pricePerServing,
+      popularity: recipe.aggregateLikes,
+      url: recipe.spoonacularSourceUrl,
+    };
+  });
+  //debugging
+  //console.log(data)
+  //console.log(recipes)
+});
+
+
+/*//Array with recipes - week 1 & 2 of the project  
 const recipes = [
   {
     id: 1,
@@ -199,13 +246,11 @@ const recipes = [
     pricePerServing: 5.5,
     popularity: 80,
   },
-];
+];*/
 
-  //Function to filter, sort and display recepies
+  //Function to filter, sort and display recepies based on the button clicked
 const displayRecipes = (button) => {
   //clear recepie section as well as any previous error messages
-  recipesSection.innerHTML = "";
-  errorSection.innerHTML = "";
 
   // find the group of buttons (either allkitchenButtons or allTimeButtons) that the clicked button belongs to
   const buttonGroup = button.classList.contains("sort-button") ? allSortButtons : allFilterButtons;
@@ -224,6 +269,16 @@ const displayRecipes = (button) => {
   // get id of the active sort option 
   const sortOptionId = sortOptionButton.id;
 
+
+
+  if (recipes.length == 0) {
+    return;
+  }
+
+  recipesSection.innerHTML = "";
+  errorSection.innerHTML = "";
+
+
   // filter the recipes based on the active filter option
   let filteredRecipes;
   if (kitchenOptionId === "all") {
@@ -231,18 +286,25 @@ const displayRecipes = (button) => {
   } else if (kitchenOptionId === "random") {
     const random = Math.floor(Math.random() * recipes.length);
     filteredRecipes = [recipes[random]];
-  } else if (kitchenOptionId === "italy") {
-    filteredRecipes = recipes.filter((recipe) => recipe.cuisine === "Italian");
-  } else if (kitchenOptionId === "usa") {
-    filteredRecipes = recipes.filter((recipe) => recipe.cuisine === "American");
-  } else if (kitchenOptionId === "china") {
-    filteredRecipes = recipes.filter((recipe) => recipe.cuisine === "Asian");
-  } else if (kitchenOptionId === "sweden") {
-    filteredRecipes = recipes.filter((recipe) => recipe.cuisine === "Sweden");
-  }
+  } else {
+    filteredRecipes = recipes.filter((recipe) => recipe.types.includes(kitchenOptionId));
+    /** Week2
+    if (kitchenOptionId === "lunch") {
+      filteredRecipes = recipes.filter((recipe) => recipe.types.contains("lunch"));
+    } else if (kitchenOptionId === "dinner") {
+      filteredRecipes = recipes.filter((recipe) => recipe.types.contains("dinner"));
+     } else if (kitchenOptionId === "dessert") {
+      filteredRecipes = recipes.filter((recipe) => recipe.types.contains("dessert"));
+    } else if (kitchenOptionId === "drink") {
+      filteredRecipes = recipes.filter((recipe) => recipe.types.contains("drink"));
+    } else if (kitchenOptionId === "snack") {
+      filteredRecipes = recipes.filter((recipe) => recipe.types.contains("snack"));
+    }
+    */
+   }
 
   //if statement for no criterion
-  if (recipes.length == 0) {
+  if (filteredRecipes.length == 0) {
     errorSection.innerHTML =
       "There is no recipes matching criterion for " + button.textContent;
     return;
@@ -252,11 +314,11 @@ const displayRecipes = (button) => {
   let sortedRecipes;
   if (sortOptionId === "highToLow") {
     sortedRecipes = filteredRecipes.sort(
-      (a, b) => (b.readyInMinutes || Infinity) - (a.readyInMinutes || Infinity)
+      (a, b) => (b.pricePerServing || Infinity) - (a.pricePerServing || Infinity)
     );
   } else if (sortOptionId === "lowToHigh") {
     sortedRecipes = filteredRecipes.sort(
-      (a, b) => (a.readyInMinutes || Infinity) - (b.readyInMinutes || Infinity)
+      (a, b) => (a.pricePerServing || Infinity) - (b.pricePerServing || Infinity)
     );
   }
 
@@ -268,18 +330,18 @@ const displayRecipes = (button) => {
       })
       .join("");
 
-    //replacing HTML recipe section with elements from an array
+    //replacing HTML recipe section with elements from an Recipes array
     recipesSection.innerHTML += `
 
 
         <div class="recipe">
-        <img src="${recipe.image}"/>
+        <a href="${recipe.url}" target="_blank"><img src="${recipe.image}"/></a>
         <h2>${recipe.title}</h2>
         <hr></hr>
         <section class="details">
           <div class="Cuisine">
-            <div class="detailsElement"><div class="Recipe-title">Cuisine:</div><div class="Recipe-region">${recipe.cuisine}</div></div>
-            <div class="detailsElement"><div class="Recipe-title">Time:</div><div class="Recipe-time">${recipe.readyInMinutes}</div></div>
+            <div class="detailsElement"><div class="Recipe-title">Cuisine:</div><div class="Recipe-region">${recipe.types}</div></div>
+            <div class="detailsElement"><div class="Recipe-title">Time:</div><div class="Recipe-time">${Math.floor(recipe.pricePerServing/10)} kr</div></div>
           </div>
         </section>
         <hr/>
@@ -308,4 +370,4 @@ allSortButtons.forEach((button) => {
   });
 });
   
-displayRecipes(allButton)
+displayRecipes(allFilterButtons[1])
